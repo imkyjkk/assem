@@ -1,0 +1,144 @@
+; CalcGrade Procedure
+
+
+INCLUDE Irvine32.inc
+
+.data
+
+hexNum DWORD ?
+
+Msg1  BYTE "1. x AND y",0
+Msg2  BYTE "2. x OR y",0
+Msg3  BYTE "3. NOT x",0
+Msg4  BYTE "4. x XOR y",0
+Msg5  BYTE "5. Exit Program",0
+
+
+.code
+main PROC
+
+
+L1:		call Menu
+		call ReadChar
+		call Clrscr
+
+		.if al==5
+
+		.elseif al=='4'
+			call Case4
+
+		.elseif al=='3'
+			call Case3
+
+		.elseif al=='2'
+			call Case2
+
+		.elseif al=='1'
+			call Case1
+			
+		.endif
+
+		loop L1
+		
+Quit:
+	ret
+main ENDP
+
+
+
+Case4 PROC
+		call Clrscr
+		mov  edx,OFFSET Msg4
+		call writestring
+		call crlf
+		mov eax,0
+		call ReadHex
+		mov hexNum,eax
+		call ReadHex
+		XOR eax,hexNum
+		call WriteHex
+		call crlf
+		call WaitMsg
+		call Clrscr
+		ret
+Case4 ENDP
+
+Case3 PROC
+		call Clrscr
+		mov  edx,OFFSET Msg3
+		call writestring
+		call crlf
+		mov eax,0
+		call ReadHex
+		mov hexNum,eax
+		call ReadHex
+		NOT	 eax
+		call WriteHex
+		call crlf
+		call WaitMsg
+		call Clrscr
+		ret
+Case3 ENDP
+
+Case2 PROC
+		call Clrscr
+		mov  edx,OFFSET Msg2
+		call writestring
+		call crlf
+		mov eax,0
+		call ReadHex
+		mov hexNum,eax
+		call ReadHex
+		OR	 eax,hexNum
+		call WriteHex
+		call crlf
+		call WaitMsg
+		call Clrscr
+		ret
+Case2 ENDP
+
+Case1 PROC
+		call Clrscr
+		mov  edx,OFFSET Msg1
+		call writestring
+		call crlf
+		mov eax,0
+		call ReadHex
+		mov hexNum,eax
+		call ReadHex
+		AND	 eax,hexNum
+		call WriteHex
+		call crlf
+		call WaitMsg
+		call Clrscr
+		ret
+Case1 ENDP
+
+
+
+Menu PROC ; using loop?
+
+	mov  edx,OFFSET Msg1
+	call writestring
+	call crlf
+
+	mov  edx,OFFSET Msg2
+	call writestring
+	call crlf
+
+	mov  edx,OFFSET Msg3
+	call writestring
+	call crlf
+
+	mov  edx,OFFSET Msg4
+	call writestring
+	call crlf
+
+	mov  edx,OFFSET Msg5
+	call writestring
+	call crlf
+
+	ret
+
+Menu ENDP
+END main

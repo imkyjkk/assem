@@ -1,0 +1,131 @@
+; CalcGrade Procedure
+
+INCLUDE Irvine32.inc
+
+.data
+
+hexNum DWORD ?
+
+Menu_Msg \
+BYTE "1. x AND y",0dh,0ah,"2. x OR y",0dh,0ah,"3. NOT x",0dh,0ah,"4. x XOR y",0dh,0ah,"5. Exit Program",0dh,0ah,0
+
+CaseTable BYTE '5'			; lookup val
+		  DWORD Case5		; addr of proc
+EntrySize = ($-CaseTable)	; 5 앞에 등호 디렉티브 보면 이건 메모리 차지 x 이다.
+		  BYTE '4'
+		  DWORD Case4
+		  BYTE '3'
+		  DWORD Case3
+		  BYTE '2'
+		  DWORD Case2
+		  BYTE '1'
+		  DWORD Case1
+
+NumberOfEntries = ($-CaseTable) / EntrySize		; 25/5=5 , 이것도 마찬가지
+
+
+Msg1  BYTE "1. x AND y",0dh,0ah,0dh,0ah,0
+Msg2  BYTE "2. x OR y",0dh,0ah,0dh,0ah,0
+Msg3  BYTE "3. NOT x",0dh,0ah,0dh,0ah,0
+Msg4  BYTE "4. x XOR y",0dh,0ah,0dh,0ah,0
+Msg5  BYTE "5. Exit Program",0dh,0ah,0dh,0ah,0
+Msg6  BYTE 0dh,0ah,"Error! Input 1 to 5",0dh,0ah,0dh,0ah,0
+
+
+.code
+main PROC
+
+L1:		call Menu
+		call ReadChar				; read char into AL
+		mov ebx,OFFSET CaseTable
+		mov ecx,NumberOfEntries		; loop counter 5
+
+L2:		cmp al,[ebx]				; match?
+		jne L3						; no - jmp L3
+		call NEAR PTR[ebx+1]		; yes - call proc 
+		jmp L1						; continue
+
+L3:		add ebx,EntrySize			; point to the next lookup val
+		loop L2
+
+		mov edx, OFFSET Msg6		; match not found
+		call WriteString
+		call WaitMsg
+		jmp L1						; continue
+
+
+main ENDP
+
+
+
+Case5 PROC
+		jmp L4
+Case5 ENDP
+
+
+
+Case4 PROC ;
+		call Clrscr
+		mov  edx,OFFSET Msg4
+		call writestring
+		call ReadHex
+		mov hexNum,eax
+		call ReadHex
+		XOR eax,hexNum
+		call WriteHex
+		call crlf
+		call WaitMsg
+		ret
+Case4 ENDP
+
+Case3 PROC
+		call Clrscr
+		mov  edx,OFFSET Msg3
+		call writestring
+		call ReadHex
+		NOT	 eax
+		call WriteHex
+		call crlf
+		call WaitMsg
+		ret
+Case3 ENDP
+
+Case2 PROC
+		call Clrscr
+		mov  edx,OFFSET Msg2
+		call writestring
+		call ReadHex
+		mov hexNum,eax
+		call ReadHex
+		OR	 eax,hexNum
+		call WriteHex
+		call crlf
+		call WaitMsg
+		ret
+Case2 ENDP
+
+Case1 PROC
+		call Clrscr
+		mov  edx,OFFSET Msg1
+		call writestring
+		call ReadHex
+		mov hexNum,eax
+		call ReadHex
+		AND	 eax,hexNum
+		call WriteHex
+		call crlf
+		call WaitMsg
+		ret
+Case1 ENDP
+
+
+Menu PROC
+	call Clrscr
+	mov  edx,OFFSET Menu_Msg
+	call writestring
+	ret
+Menu ENDP
+
+L4:
+invoke exitprocess, 0 ; 이건 써줘야 댐....  그리고 이게 메인에 없어도 된다.흠.
+END main

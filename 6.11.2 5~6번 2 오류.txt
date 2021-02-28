@@ -1,0 +1,155 @@
+; CalcGrade Procedure
+;https://m.blog.naver.com/PostView.nhn?blogId=stop2y&logNo=221049321800&proxyReferer=https%3A%2F%2Fwww.google.com%2F
+;https://www.google.com/search?ei=HCyIXryFFcqxmAWZm4uQBQ&q=eax%EC%97%90+%EB%93%A4%EC%96%B4%EA%B0%80%EB%8A%94+%EC%B5%9C%EB%8C%80+16%EC%A7%84%EC%88%98&oq=eax%EC%97%90+%EB%93%A4%EC%96%B4%EA%B0%80%EB%8A%94+%EC%B5%9C%EB%8C%80+16%EC%A7%84%EC%88%98&gs_lcp=CgZwc3ktYWIQAzIFCCEQoAFKDAgXEggxMC05MWc5MUoKCBgSBjEwLTRnM1DNeFjpgQFgq4IBaAFwAHgAgAFgiAGiBpIBATmYAQCgAQGqAQdnd3Mtd2l6&sclient=psy-ab&ved=0ahUKEwi8g86Ylc7oAhXKGKYKHZnNAlIQ4dUDCAw&uact=5
+INCLUDE Irvine32.inc
+
+.data
+
+hexNum DWORD ?
+
+Menu_Msg \
+BYTE "1. x AND y",0dh,0ah,"2. x OR y",0dh,0ah,"3. NOT x",0dh,0ah,"4. x XOR y",0dh,0ah,"5. Exit Program",0
+
+CaseTable BYTE '5'			; lookup val
+		  DWORD Case5		; addr of proc
+		  BYTE '4'
+		  DWORD Case4
+		  BYTE '3'
+		  DWORD Case3
+		  BYTE '2'
+		  DWORD Case2
+		  BYTE '1'
+		  DWORD Case1
+
+
+Msg1  BYTE "1. x AND y",0
+Msg2  BYTE "2. x OR y",0
+Msg3  BYTE "3. NOT x",0
+Msg4  BYTE "4. x XOR y",0
+Msg5  BYTE "5. Exit Program",0
+
+
+
+.code
+main PROC
+
+L1:		call Menu
+		call ReadChar
+		call Case_entry
+		jmp L1
+		
+main ENDP
+
+
+Case_entry PROC
+
+		.if al=='5'
+			jmp QUIT ;이게 문제가 되는가.. 흠
+
+		.elseif al=='4'
+			call Case4
+
+		.elseif al=='3'
+			call Case3
+
+		.elseif al=='2'
+			call Case2
+
+		.elseif al=='1'
+			call Case1
+			
+		.endif
+
+		ret
+Case_entry ENDP
+
+Case5 PROC
+
+Case5 ENDP
+
+
+
+Case4 PROC ; movsx? 로 하면 초기화mov eax,0 필요없을듯?
+		call Clrscr
+		mov  edx,OFFSET Msg4
+		call writestring
+		call crlf
+		mov eax,0
+		call ReadHex
+		mov hexNum,eax
+		mov eax,0
+		call ReadHex
+		XOR eax,hexNum
+		call WriteHex
+		call crlf
+		call WaitMsg
+		call Clrscr
+		ret
+Case4 ENDP
+
+Case3 PROC
+		call Clrscr
+		mov  edx,OFFSET Msg3
+		call writestring
+		call crlf
+		mov eax,0
+		call ReadHex
+		mov hexNum,eax
+		mov eax,0
+		call ReadHex
+		NOT	 eax
+		call WriteHex
+		call crlf
+		call WaitMsg
+		call Clrscr
+		ret
+Case3 ENDP
+
+Case2 PROC
+		call Clrscr
+		mov  edx,OFFSET Msg2
+		call writestring
+		call crlf
+		mov eax,0
+		call ReadHex
+		mov hexNum,eax
+		mov eax,0
+		call ReadHex
+		OR	 eax,hexNum
+		call WriteHex
+		call crlf
+		call WaitMsg
+		call Clrscr
+		ret
+Case2 ENDP
+
+Case1 PROC
+		call Clrscr
+		mov  edx,OFFSET Msg1
+		call writestring
+		call crlf
+		mov eax,0
+		call ReadHex
+		mov hexNum,eax
+		mov eax,0
+		call ReadHex
+		AND	 eax,hexNum
+		call WriteHex
+		call crlf
+		call WaitMsg
+		call Clrscr
+		ret
+Case1 ENDP
+
+
+
+Menu PROC
+	call Clrscr
+	mov  edx,OFFSET Menu_Msg
+	call writestring
+	call crlf
+	ret
+Menu ENDP
+
+QUIT:
+END main

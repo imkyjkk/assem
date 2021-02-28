@@ -1,0 +1,77 @@
+﻿; CalcGrade Procedure
+
+
+INCLUDE Irvine32.inc
+
+.data
+
+
+score BYTE 10, 50, 70, 80, 100
+
+aMsg  BYTE "��,Grade A",0
+bMsg  BYTE "��,Grade B",0
+cMsg  BYTE "��,Grade C",0
+dMsg  BYTE "��,Grade D",0
+fMsg  BYTE "��,Grade F",0
+
+
+.code
+main PROC
+
+	mov   esi,OFFSET score			; point to the array
+	mov   ecx,LENGTHOF score		; loop counter
+
+L1:		call CalcGrade
+		call WriteDec
+		call WriteString
+		call Crlf
+		add esi,TYPE score
+		loop L1
+		exit
+
+main ENDP
+
+
+
+
+CalcGrade PROC
+
+		.IF BYTE PTR [esi] >= 90
+
+			mov   edx,OFFSET aMsg			; display grade
+			movzx eax,BYTE PTR [esi]		; display score
+
+
+		.ELSEIF  BYTE PTR [esi] >= 80
+
+			mov   edx,OFFSET bMsg			; display grade
+			movzx eax,BYTE PTR [esi]		; display score
+
+
+		.ELSEIF   BYTE PTR [esi] >= 70
+			
+			mov   edx,OFFSET cMsg			; display grade
+			movzx eax,BYTE PTR [esi]		; display score
+
+
+		.ELSEIF   BYTE PTR [esi] >= 60
+
+			mov   edx,OFFSET dMsg			; display grade
+			movzx eax,BYTE PTR [esi]		; display score
+
+	
+		.ELSEIF   BYTE PTR [esi] >= 0
+	
+			mov   edx,OFFSET fMsg			; display grade
+			movzx eax,BYTE PTR [esi]		; display score
+
+		.ENDIF
+		
+		ret
+
+CalcGrade ENDP
+
+
+;여긴 invoke exit process 안써도 왜 종료일까
+
+END main
